@@ -1,5 +1,32 @@
 /* ForeFlight Dispatch — AAR Mission Planner · BAVOC-I-3768 v1 · Vanilla JS */
 
+// ── Mock Flight List data (matches ForeFlight Dispatch screenshots) ────────
+const FLIGHTS = [
+  { etd:'Apr 24, 15:34Z / 10:34 CDT', ac:'XXDEMO1 (GL5T) / FFLDEMO',  dep:'KFLD', dest:'KAVP', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 14:35Z / 08:35 MDT', ac:'XXDEMO1 (FA7X) / FFLDEMO',  dep:'KBFF', dest:'KNIP', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 14:09Z / 15:09 BST', ac:'XXDEMO1 (CL60) / FFLDEMO',  dep:'EGPO', dest:'EGGW', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 10:06Z / 06:06 EDT', ac:'XXDEMO2 (GL5T) / FFLDEMO',  dep:'KNBC', dest:'KSFO', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 09:12Z / 11:12 CEST',ac:'XXDEMO3 (GLF4) / FFLDEMO',  dep:'LFPN', dest:'EDDG', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 08:50Z / 10:50 CEST',ac:'XXDEMO1 (GL5T) / FFLDEMO',  dep:'LFPM', dest:'LDZA', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 08:33Z / 04:33 EDT', ac:'XXDEMO1 (CL60) / FFLDEMO',  dep:'KFQD', dest:'KGQQ', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 06:34Z / 08:34 CEST',ac:'XXDEMO1 (FA7X) / FFLDEMO',  dep:'LFLA', dest:'EDDB', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 05:30Z / 06:30 BST', ac:'XXDEMO3 (GLF4) / FFLDEMO',  dep:'EGLF', dest:'EGLJ', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 04:45Z / 00:45 EDT', ac:'XXDEMO2 (FA7X) / FFLDEMO',  dep:'KACY', dest:'KCNM', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 04:19Z / 06:19 CEST',ac:'XXDEMO2 (H25B) / FFLDEMO',  dep:'LDZA', dest:'LRTR', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 03:54Z / 05:54 CEST',ac:'CL650A (CL60) / FFLDEMO',   dep:'LIRN', dest:'LHBP', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 03:51Z / 04:51 BST', ac:'CL650A (CL60) / FFLDEMO',   dep:'EGLJ', dest:'EGHH', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 01:49Z / Apr 23, 19:49 MDT', ac:'CL650A (CL60) / FFLDEMO', dep:'KGNB', dest:'KLHV', alt:'', released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 01:07Z / 02:07 BST', ac:'CL650A (CL60) / FFLDEMO',   dep:'EGPA', dest:'LFSB', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 24, 00:57Z / Apr 23, 18:57 MDT', ac:'XXDEMO1 (FA7X) / FFLDEMO', dep:'KALM', dest:'KMIB', alt:'', released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 00:46Z / Apr 23, 19:46 CDT', ac:'XXDEMO2 (H25B) / FFLDEMO', dep:'KGZS', dest:'KCVS', alt:'', released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 24, 00:00Z / Apr 23, 20:00 EDT', ac:'CL650A (CL60) / FFLDEMO',  dep:'KFGU', dest:'KLEM', alt:'', released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 23, 23:42Z / Apr 24, 00:42 BST', ac:'XXDEMO3 (GLF4) / FFLDEMO', dep:'EGPH', dest:'BIRK', alt:'LIFR', released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 23, 23:26Z / 16:26 PDT',  ac:'XXDEMO3 (GLF4) / FFLDEMO',  dep:'KPRB', dest:'KTKI', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 23, 23:22Z / 18:22 CDT',  ac:'XXDEMO1 (FA7X) / FFLDEMO',  dep:'KHCO', dest:'KFAM', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'US' },
+  { etd:'Apr 23, 22:05Z / Apr 24, 00:05 CEST',ac:'XXDEMO2 (H25B) / FFLDEMO', dep:'EDNY', dest:'EGPH', alt:'LIFR', released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+  { etd:'Apr 23, 21:17Z / Apr 24, 00:17 EEST',ac:'XXDEMO2 (H25B) / FFLDEMO', dep:'LGSA', dest:'EGTK', alt:'',     released:'Not Released', pic:'N/A', createdBy:'Scheduling', status:'Not Filed', tracking:'', tag:'EU' },
+];
+
 const MISSIONS = [
   {
     id: 'noble41',
@@ -64,21 +91,70 @@ const MISSIONS = [
 ];
 
 let activeMissionId = null;
-let activeCoa = 'primary'; // 'primary' | 'contingency'
-let activeTab = 'plan';    // 'plan' | 'briefing'
-let currentView = 'flights'; // 'flights' | 'missions'
-
-// ── Helpers ────────────────────────────────────────────────────────────────
+let activeCoa = 'primary';
+let activeTab = 'plan';
+let activePage = 'flights'; // 'flights' | 'missions' | etc.
 
 function el(id) { return document.getElementById(id); }
-
-function fuelPct(foa, target) {
-  return Math.min(100, Math.round((foa / target) * 100));
-}
-
+function fuelPct(foa, target) { return Math.min(100, Math.round((foa / target) * 100)); }
 function fmt(n) { return n.toLocaleString(); }
 
-// ── Render sidebar ─────────────────────────────────────────────────────────
+// ── Render Flight List ─────────────────────────────────────────────────────
+
+function renderFlightList() {
+  const tbody = el('flights-tbody');
+  tbody.innerHTML = FLIGHTS.map(f => {
+    const altCell = f.alt
+      ? `<span class="ff-cell-mono">${f.dest}</span> <span class="ff-cell-orange">${f.alt}</span>`
+      : `<span class="ff-cell-mono">${f.dest}</span>`;
+    return `
+      <tr>
+        <td class="ff-cell-mono">${f.etd}</td>
+        <td>${f.ac}</td>
+        <td class="ff-cell-mono">${f.dep}</td>
+        <td>${altCell}</td>
+        <td class="ff-cell-mono"></td>
+        <td class="ff-cell-strong">${f.released}</td>
+        <td>${f.pic}</td>
+        <td>${f.createdBy}</td>
+        <td class="ff-cell-strong">${f.status}</td>
+        <td>${f.tracking}</td>
+        <td>${f.tag ? `<span class="ff-tag">${f.tag}</span>` : ''}</td>
+        <td class="ff-actions-cell">
+          <span class="ff-action-link">Edit</span>
+          <span class="ff-action-more">More ▾</span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ── Page navigation ────────────────────────────────────────────────────────
+
+function showPage(page) {
+  activePage = page;
+
+  document.querySelectorAll('.ff-header-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.page === page);
+  });
+  // Sync left nav (Dispatch is the parent for both flights & missions)
+  document.querySelectorAll('.ff-nav-item[data-page]').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === 'flights' && (page === 'flights' || page === 'missions'));
+  });
+
+  document.querySelectorAll('.ff-page').forEach(p => p.classList.add('hidden'));
+  el(`page-${page}`).classList.remove('hidden');
+
+  // Hide "New flight" button on non-flights pages
+  el('btn-new-flight').style.display = (page === 'flights') ? '' : 'none';
+
+  if (page === 'missions' && !activeMissionId) {
+    activeMissionId = MISSIONS[0].id;
+    renderAll();
+  }
+}
+
+// ── Mission planner (existing) ─────────────────────────────────────────────
 
 function renderSidebar() {
   const list = el('mission-list');
@@ -99,8 +175,6 @@ function renderSidebar() {
   });
 }
 
-// ── Render mission detail ──────────────────────────────────────────────────
-
 function renderMissionDetail() {
   const mission = MISSIONS.find(m => m.id === activeMissionId);
 
@@ -116,12 +190,9 @@ function renderMissionDetail() {
   el('mission-name').textContent = mission.name;
   el('mission-meta').textContent = mission.meta;
 
-  // CoA toggle
   document.querySelectorAll('.coa-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.coa === activeCoa);
   });
-
-  // Tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tab === activeTab);
   });
@@ -142,22 +213,10 @@ function renderTanker(mission) {
   el('tanker-row').innerHTML = `
     <div class="aircraft-card">
       <span class="aircraft-badge">${t.type}</span>
-      <div class="field-group">
-        <span class="field-label">Callsign</span>
-        <span class="field-value">${t.callsign}</span>
-      </div>
-      <div class="field-group">
-        <span class="field-label">Route</span>
-        <span class="field-value mono">${t.route}</span>
-      </div>
-      <div class="field-group">
-        <span class="field-label">Departure</span>
-        <span class="field-value mono">${t.dep}</span>
-      </div>
-      <div class="field-group">
-        <span class="field-label">Available Offload</span>
-        <span class="field-value mono">${fmt(t.fuel_available)} lbs</span>
-      </div>
+      <div class="field-group"><span class="field-label">Callsign</span><span class="field-value">${t.callsign}</span></div>
+      <div class="field-group"><span class="field-label">Route</span><span class="field-value mono">${t.route}</span></div>
+      <div class="field-group"><span class="field-label">Departure</span><span class="field-value mono">${t.dep}</span></div>
+      <div class="field-group"><span class="field-label">Available Offload</span><span class="field-value mono">${fmt(t.fuel_available)} lbs</span></div>
     </div>
   `;
 }
@@ -169,7 +228,7 @@ function renderAREvents(mission) {
     const isContingency = activeCoa === 'contingency';
     const openClass = i === 0 ? 'open' : '';
     const divRow = (isContingency && data.divert)
-      ? `<div class="field-group"><span class="field-label">Divert Airport</span><span class="field-value mono" style="color:var(--warning)">${data.divert}</span></div>`
+      ? `<div class="field-group"><span class="field-label">Divert Airport</span><span class="field-value mono" style="color:var(--ff-warn)">${data.divert}</span></div>`
       : '';
     return `
       <div class="ar-event" data-evt="${i}">
@@ -180,30 +239,12 @@ function renderAREvents(mission) {
           <span class="ar-chevron ${openClass}" id="chevron-${i}">▶</span>
         </div>
         <div class="ar-event-body ${openClass}" id="ar-body-${i}">
-          <div class="field-group">
-            <span class="field-label">AR Track</span>
-            <span class="field-value mono">${data.track}</span>
-          </div>
-          <div class="field-group">
-            <span class="field-label">Contact Point</span>
-            <span class="field-value mono">${data.point}</span>
-          </div>
-          <div class="field-group">
-            <span class="field-label">Altitude</span>
-            <span class="field-value mono">${data.alt}</span>
-          </div>
-          <div class="field-group">
-            <span class="field-label">AR Speed</span>
-            <span class="field-value mono">${data.speed}</span>
-          </div>
-          <div class="field-group">
-            <span class="field-label">Offload per Receiver</span>
-            <span class="field-value mono">${fmt(data.offload_each)} lbs</span>
-          </div>
-          <div class="field-group">
-            <span class="field-label">Window</span>
-            <span class="field-value mono">${data.window}</span>
-          </div>
+          <div class="field-group"><span class="field-label">AR Track</span><span class="field-value mono">${data.track}</span></div>
+          <div class="field-group"><span class="field-label">Contact Point</span><span class="field-value mono">${data.point}</span></div>
+          <div class="field-group"><span class="field-label">Altitude</span><span class="field-value mono">${data.alt}</span></div>
+          <div class="field-group"><span class="field-label">AR Speed</span><span class="field-value mono">${data.speed}</span></div>
+          <div class="field-group"><span class="field-label">Offload per Receiver</span><span class="field-value mono">${fmt(data.offload_each)} lbs</span></div>
+          <div class="field-group"><span class="field-label">Window</span><span class="field-value mono">${data.window}</span></div>
           ${divRow}
         </div>
       </div>
@@ -212,10 +253,8 @@ function renderAREvents(mission) {
 }
 
 window.toggleAREvent = function(i) {
-  const body = el(`ar-body-${i}`);
-  const chevron = el(`chevron-${i}`);
-  body.classList.toggle('open');
-  chevron.classList.toggle('open');
+  el(`ar-body-${i}`).classList.toggle('open');
+  el(`chevron-${i}`).classList.toggle('open');
 };
 
 function renderReceivers(mission) {
@@ -244,27 +283,14 @@ function renderReceivers(mission) {
   container.innerHTML = `
     <table class="receivers-table">
       <thead>
-        <tr>
-          <th>Seq</th><th>Callsign</th><th>Type</th><th>Fuel on Arrival (est)</th><th>Target Onload</th>
-        </tr>
+        <tr><th>Seq</th><th>Callsign</th><th>Type</th><th>Fuel on Arrival (est)</th><th>Target Onload</th></tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
     <div class="add-receiver-row" id="add-receiver-form" style="display:none">
-      <div class="form-field">
-        <label>Callsign</label>
-        <input type="text" id="new-callsign" placeholder="e.g. NOBLE 41-5">
-      </div>
-      <div class="form-field">
-        <label>Aircraft Type</label>
-        <select id="new-type">
-          <option>F-35A</option><option>F-35B</option><option>F-16C</option><option>F-15E</option><option>C-17</option><option>Other</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <label>Target Onload (lbs)</label>
-        <input type="number" id="new-onload" placeholder="14000">
-      </div>
+      <div class="form-field"><label>Callsign</label><input type="text" id="new-callsign" placeholder="e.g. NOBLE 41-5"></div>
+      <div class="form-field"><label>Aircraft Type</label><select id="new-type"><option>F-35A</option><option>F-35B</option><option>F-16C</option><option>F-15E</option><option>C-17</option><option>Other</option></select></div>
+      <div class="form-field"><label>Target Onload (lbs)</label><input type="number" id="new-onload" placeholder="14000"></div>
       <button class="btn-accent" onclick="addReceiver()">Add</button>
     </div>
   `;
@@ -282,8 +308,6 @@ window.addReceiver = function() {
   renderReceivers(mission);
   el('btn-add-receiver').style.display = '';
 };
-
-// ── Briefing ────────────────────────────────────────────────────────────────
 
 function renderBriefing(mission) {
   const isContingency = activeCoa === 'contingency';
@@ -336,31 +360,37 @@ Total offload required: ${fmt(totalOffload)} lbs
   `;
 }
 
-// ── Event wiring ───────────────────────────────────────────────────────────
-
 function renderAll() {
   renderSidebar();
   renderMissionDetail();
 }
 
+// ── Wire up events ─────────────────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', () => {
-  // View toggle (Flights / Missions)
-  document.querySelectorAll('.toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentView = btn.dataset.view;
-      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.view === currentView));
-      el('view-flights').classList.toggle('hidden', currentView !== 'flights');
-      el('view-missions').classList.toggle('hidden', currentView !== 'missions');
-    });
+  renderFlightList();
+
+  // Top header tab navigation
+  document.querySelectorAll('.ff-header-tab').forEach(tab => {
+    tab.addEventListener('click', () => showPage(tab.dataset.page));
   });
 
-  // New mission button
+  // Left nav: Dispatch sends back to Flights
+  document.querySelectorAll('.ff-nav-item[data-page="flights"]').forEach(n => {
+    n.addEventListener('click', () => showPage('flights'));
+  });
+
+  // New mission
   el('btn-new-mission').addEventListener('click', () => {
-    // For prototype: just select the first mission with a hint
     alert('In production, this opens a "New Mission" setup form.\n\nFor this prototype, select an existing mission from the list to explore the planning interface.');
   });
 
-  // CoA toggle (delegated)
+  // New flight
+  el('btn-new-flight').addEventListener('click', () => {
+    alert('In production, this opens the New Flight form.');
+  });
+
+  // CoA + planner tabs (delegated)
   document.addEventListener('click', e => {
     if (e.target.classList.contains('coa-btn')) {
       activeCoa = e.target.dataset.coa;
@@ -372,17 +402,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add receiver button
+  // Add receiver
   el('btn-add-receiver').addEventListener('click', () => {
     el('add-receiver-form').style.display = 'grid';
     el('btn-add-receiver').style.display = 'none';
   });
 
-  // Initial render — open first mission
+  // Initial state
   activeMissionId = MISSIONS[0].id;
-  currentView = 'missions';
-  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.view === 'missions'));
-  el('view-flights').classList.add('hidden');
-  el('view-missions').classList.remove('hidden');
   renderAll();
+  showPage('flights');
 });
