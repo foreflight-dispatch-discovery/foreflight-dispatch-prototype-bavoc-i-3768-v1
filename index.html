@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ForeFlight Dispatch — Air Refueling Mission Planner · BAVOC-I-3768 v1</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Prototype banner -->
+  <div class="banner">
+    <strong>PROTOTYPE · BAVOC-I-3768 v1</strong> — Air-to-Air Refueling Mission Planner for ForeFlight Dispatch
+    <span class="banner-note">Discovery prototype. Not a real product. For internal validation only.</span>
+  </div>
+
+  <div class="app">
+
+    <!-- ── Sidebar ──────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-toggle">
+          <button class="toggle-btn" data-view="flights">Flights</button>
+          <button class="toggle-btn active" data-view="missions">Missions</button>
+        </div>
+      </div>
+
+      <!-- Flights view (existing Dispatch context) -->
+      <div id="view-flights" class="sidebar-body hidden">
+        <div style="padding:12px 16px;font-size:12px;color:var(--muted)">Existing flight plans</div>
+        <div class="flight-item">EDDB → EGLL · KC-135R · NOBLE41</div>
+        <div class="flight-item">LIRA → LFPB · C-17 · STEEL11</div>
+        <div class="flight-item">KLSV → EGVN · KC-135R · HAWK01</div>
+      </div>
+
+      <!-- Missions view (new concept) -->
+      <div id="view-missions" class="sidebar-body">
+        <button class="btn-primary" id="btn-new-mission">+ New Mission</button>
+        <div id="mission-list"></div>
+      </div>
+    </aside>
+
+    <!-- ── Main content ──────────────────────────────────────── -->
+    <main class="main">
+
+      <div id="no-mission-selected" class="empty-state hidden">
+        <p>Select a mission or create a new one.</p>
+      </div>
+
+      <div id="mission-detail">
+
+        <!-- Mission header -->
+        <div class="mission-header">
+          <div>
+            <h2 id="mission-name">—</h2>
+            <span class="mission-meta" id="mission-meta"></span>
+          </div>
+          <div class="coa-toggle">
+            <span class="coa-label">Course of action:</span>
+            <button class="coa-btn active" data-coa="primary">Primary</button>
+            <button class="coa-btn" data-coa="contingency">Contingency</button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="plan">Mission Plan</button>
+          <button class="tab-btn" data-tab="briefing">Briefing Preview</button>
+        </div>
+
+        <!-- ── Plan tab ──────────────────────────────────────── -->
+        <div id="tab-plan" class="tab-content">
+
+          <!-- Tanker -->
+          <div class="section">
+            <div class="section-title">
+              <h3>Tanker</h3>
+            </div>
+            <div id="tanker-row"></div>
+          </div>
+
+          <!-- AR Events -->
+          <div class="section">
+            <div class="section-title">
+              <h3>AR Events</h3>
+            </div>
+            <div id="ar-events"></div>
+          </div>
+
+          <!-- Receivers -->
+          <div class="section">
+            <div class="section-title">
+              <h3>Receivers</h3>
+              <button class="btn-secondary" id="btn-add-receiver">+ Add Receiver</button>
+            </div>
+            <div id="receivers-list"></div>
+          </div>
+
+        </div>
+
+        <!-- ── Briefing tab ──────────────────────────────────── -->
+        <div id="tab-briefing" class="tab-content hidden">
+          <div id="briefing-content"></div>
+        </div>
+
+      </div><!-- /mission-detail -->
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
